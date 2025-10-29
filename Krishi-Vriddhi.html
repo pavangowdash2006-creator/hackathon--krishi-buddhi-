@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Krishi-Vriddhi - Smart Farm Records</title>
+  <style>
+body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to right, #ed6cf7, #61c2f0);
+      color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      margin: 0;
+    }
+     body {
+  font-family: "Agency FB", sans-serif;
+  background: url("Close_View.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #1a1a1a;
+  padding: 20px;
+  margin: 0;
+}
+     .card {
+      background: #93e3f3;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 480px;
+      transition: transform 0.2s ease;
+    }
+  card:hover {
+      transform: scale(1.02);
+    }
+
+    header {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #333;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #18ea23;
+    }
+
+    p {
+      color: #040303;
+      margin: 10px 0 20px 0;
+    }
+
+    .btn {
+      background: #ff0505;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background: #04fc10;
+      transform: scale(1.05);
+    }
+
+     select {
+      margin-top: 20px;
+      padding: 8px 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .emoji {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+     footer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+</style>
+<body>
+  <div class="card">
+    <div class="emoji">🌾</div>
+    <h1 id="title">Welcome to Krishi-Vriddhi</h1>
+    <p id="desc">
+      A smart way for farmers to record, track, and visualize their farm data.
+    </p>
+    <button class="btn" id="btnStart" onclick="goToDashboard()">Provide Data</button>
+
+    <br>
+    <select id="langSelect">
+      <option value="en">English</option>
+      <option value="kn">ಕನ್ನಡ</option>
+    </select>
+  </div>
+
+  <script>
+ function goToDashboard() {
+  window.location.href = "storage.html";
+}
+ // two language needed
+    const translations = {
+      en: {
+        title: "Welcome to Krishi-Vriddhi",
+        desc: "A smart way for farmers to record, track, and visualize their farm data.",
+        btnStart: "Start Recording"
+      },
+      kn: {
+        title: "ಕೃಷಿ-ವೃದ್ಧಿಗೆ ಸ್ವಾಗತ",
+        desc: "ಕೃಷಿಕರು ತಮ್ಮ ಕೃಷಿ ಮಾಹಿತಿಯನ್ನು ಡಿಜಿಟಲ್ ರೀತಿಯಲ್ಲಿ ದಾಖಲಿಸಲು, ಟ್ರ್ಯಾಕ್ ಮಾಡಲು ಮತ್ತು ವೀಕ್ಷಿಸಲು ಬುದ್ಧಿವಂತ ಮಾರ್ಗ.",
+        btnStart: "ದಾಖಲೆ ಪ್ರಾರಂಭಿಸಿ"
+      }
+    };
+
+    const title = document.getElementById("title");
+    const desc = document.getElementById("desc");
+    const btnStart = document.getElementById("btnStart");
+    const langSelect = document.getElementById("langSelect");
+
+    // Saving First language
+    const savedLang = localStorage.getItem("language") || "en";
+    langSelect.value = savedLang;
+    setLanguage(savedLang);
+
+    langSelect.addEventListener("change", () => {
+      const lang = langSelect.value;
+      setLanguage(lang);
+      localStorage.setItem("language", lang);
+    });
+
+    function setLanguage(lang) {
+      const t = translations[lang];
+      title.textContent = t.title;
+      desc.textContent = t.desc;
+      btnStart.textContent = t.btnStart;
+    }
+  </script>
+<footer> 2025 Krishi-Budhi An Student-Farmer initiative❤️</footer>
+</body>
+</html>

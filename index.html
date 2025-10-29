@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome to Krishi-Vriddhi</title>
+  
+  
+  <style>
+    * { box-sizing: border-box; }
+    body {
+  font-family: "Poppins", sans-serif;
+  background: 
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  color: #fff;
+}
+    body {
+  font-family: "Agency FB", sans-serif;
+  background: url("Open_View.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #1a1a1a;
+  padding: 20px;
+  margin: 0;
+}
+
+    .container {
+      background: rgba(255,255,255,0.1);
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      width: 340px;
+      animation: fadeIn 0.8s ease;
+    }
+    h2 { margin-bottom: 10px; font-weight: 600; }
+    input {
+      width: 100%;
+      padding: 10px 15px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #04f911;
+      color: #333;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #5563DE;
+      color: #fff;
+      transform: scale(1.05);
+    }
+    a {
+      color: #fff;
+      font-size: 14px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .hidden { display: none; }
+    .greeting {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin-top: 15px;
+      animation: slideIn 0.8s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .form-container {
+  background: rgba(255, 255, 255, 0.3); /* semi-transparent white */
+  backdrop-filter: blur(10px);          /* main blur effect */
+  -webkit-backdrop-filter: blur(10px);  /* Safari support */
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  max-width: 700px;
+  margin: auto;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="title">👋 Welcome!</h2>
+
+
+   
+    <div id="registerDiv">
+      <p>Create your account</p>
+      <input type="text" id="regName" placeholder="Enter your name" />
+      <input type="password" id="regPass" placeholder="Enter your password" />
+      <button id="registerBtn">Register</button>
+      <p><a id="gotoLogin">Already have an account? Login</a></p>
+    </div>
+
+    <!-- Login -->
+    <div id="loginDiv" class="hidden">
+      <p>Welcome back! Please login.</p>
+      <input type="text" id="loginName" placeholder="Your name" />
+      <input type="password" id="loginPass" placeholder="Your password" />
+      <button id="loginBtn">Login</button>
+      <p><a id="forgotLink">Forgot Password?</a></p>
+      <p><a id="gotoRegister">Create new account</a></p>
+    </div>
+
+    <!-- Forgot Password -->
+    <div id="forgotDiv" class="hidden">
+      <p>Reset your password</p>
+      <input type="text" id="forgotName" placeholder="Enter your name" />
+      <input type="password" id="newPass" placeholder="Enter new password" />
+      <button id="resetBtn">Reset Password</button>
+      <p><a id="backToLogin">⬅ Back to Login</a></p>
+    </div>
+
+    <!-- Greeting -->
+    <div id="greetDiv" class="hidden">
+      <h3 id="greetMsg" class="greeting"></h3>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <script>
+    const regDiv = document.getElementById("registerDiv");
+    const loginDiv = document.getElementById("loginDiv");
+    const greetDiv = document.getElementById("greetDiv");
+    const forgotDiv = document.getElementById("forgotDiv");
+    const greetMsg = document.getElementById("greetMsg");
+    const title = document.getElementById("title");
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem("users")) || [];
+    }
+    function saveUsers(users) {
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+function goToDashboard() {
+  window.location.href = "Krishi-Vriddhi.html";
+}
+    // Register new user
+    document.getElementById("registerBtn").onclick = () => {
+      const name = document.getElementById("regName").value.trim();
+      const pass = document.getElementById("regPass").value;
+      if (!name || !pass) return alert("Please fill in both name and password!");
+
+      let users = getUsers();
+      if (users.find(u => u.name === name)) {
+        return alert("Username already exists!");
+      }
+
+      users.push({ name, pass });
+      saveUsers(users);
+
+      alert("Account created successfully!");
+      regDiv.classList.add("hidden");
+      loginDiv.classList.remove("hidden");
+      title.textContent = "👋 Welcome back!";
+    };
+
+    // Login
+    document.getElementById("loginBtn").onclick = () => {
+      const name = document.getElementById("loginName").value.trim();
+      const pass = document.getElementById("loginPass").value;
+      let users = getUsers();
+
+      const user = users.find(u => u.name === name && u.pass === pass);
+      if (user) {
+        loginDiv.classList.add("hidden");
+        greetDiv.classList.remove("hidden");
+        greetMsg.textContent = `🎉 Hello ${user.name}! Great to see you again!`;
+        title.textContent = "😊 Logged in!";
+        {
+            goToDashboard();
+        }
+      } else {
+        alert("Incorrect name or password!");
+
+      }
+    };
+
+    // Forgot Password
+    document.getElementById("forgotLink").onclick = () => {
+      loginDiv.classList.add("hidden");
+      forgotDiv.classList.remove("hidden");
+      title.textContent = "🔑 Forgot Password?";
+    };
+
+    document.getElementById("resetBtn").onclick = () => {
+      const name = document.getElementById("forgotName").value.trim();
+      const newPass = document.getElementById("newPass").value;
+      let users = getUsers();
+      const user = users.find(u => u.name === name);
+      if (!user) return alert("Name not found!");
+      user.pass = newPass;
+      saveUsers(users);
+      alert("Password reset successfully!");
+      forgotDiv.classList.add("hidden");
+      loginDiv.classList.remove("hidden");
+      title.textContent = "👋 Welcome back!";
+    };
+
+    // Logout
+    document.getElementById("logoutBtn").onclick = () => {
+      greetDiv.classList.add("hidden");
+      loginDiv.classList.remove("hidden");
+      title.textContent = "👋 Welcome back!";
+      greetMsg.textContent = "";
+      document.getElementById("loginName").value = "";
+      document.getElementById("loginPass").value = "";
+    };
+
+    // Navigation Links
+    document.getElementById("gotoLogin").onclick = () => {
+      regDiv.classList.add("hidden");
+      loginDiv.classList.remove("hidden");
+      title.textContent = "👋 Welcome back!";
+    };
+
+    document.getElementById("gotoRegister").onclick = () => {
+      loginDiv.classList.add("hidden");
+      regDiv.classList.remove("hidden");
+      title.textContent = "📝 Create new account";
+    };
+
+    document.getElementById("backToLogin").onclick = () => {
+      forgotDiv.classList.add("hidden");
+      loginDiv.classList.remove("hidden");
+      title.textContent = "👋 Welcome back!";
+    };
+  </script>
+  </body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Krishi-Budhi Dashboard</title>
+  <style>
+    body {
+      font-family: "Agency FB", sans-serif;
+      background: url("Large_View.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: #1a1a1a;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #44bded;
+    }
+
+    .form-container {
+      background: rgb(188, 90, 244);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+
+    input {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: calc(20% - 12px);
+    }
+
+    button {
+      background: hsl(194, 92%, 52%);
+      color: rgb(0, 0, 0);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #07e012;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #a5d6a7;
+    }
+
+    table, th, td {
+      color: white;
+    }
+
+    #output {
+      color: white;
+      font-weight: bold;
+      text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.1);
+    }
+
+    td {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    input {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      border: 1px solid #fff;
+    }
+
+    button {
+      background: rgba(255, 255, 255, 0.3);
+      color: #000;
+      border: 1px solid #fff;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .back-btn {
+      margin-bottom: 15px;
+      text-decoration: none;
+      color: #1ad623;
+      font-weight: bold;
+    }
+
+    select {
+      float: right;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 700px;
+      margin: 0 auto 10px auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-row">
+    <a href="Krishi-Vriddhi.html" class="back-btn" id="btnBack">← Back</a>
+    <select id="langSelect">
+      <option value="en">English </option>
+      <option value="kn">ಕನ್ನಡ </option>
+    </select>
+  </div>
+
+  <!-- Extra Weather option -->
+  <div style="text-align:center;">
+    <h3>🌤️ Check Weather in your Area</h3>
+    <input type="text" id="city" placeholder="Enter city">
+    <button onclick="getWeather()">Check</button>
+    <p id="output"></p>
+  </div>
+
+  <h1 id="dashboardTitle">Krishi-Budhi Dashboard</h1>
+
+  <!-- Intake data -->
+  <div class="form-container">
+    <h3 id="formTitle">Add New Farm Record</h3>
+    <input type="date" id="date">
+    <input type="text" id="crop" placeholder="Crop Name">
+    <input type="number" id="expense" placeholder="Expense (₹)">
+    <input type="text" id="fertilizer" placeholder="Fertilizer Used">
+    <input type="number" id="yield" placeholder="Yield (kg)">
+    <button onclick="addRecord()" id="addBtn">Add Record</button>
+  </div>
+
+  <table id="recordsTable">
+    <thead>
+      <tr id="tableHeaders">
+        <th>Date</th><th>Crop</th><th>Expense (₹)</th><th>Fertilizer</th><th>Yield (kg)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const translations = {
+      en: {
+        formTitle: "Add New Farm Record", addBtn: "Add Record",
+        headers: ["Date", "Crop", "Expense (₹)", "Fertilizer", "Yield (kg)"],
+        placeholders: ["Crop Name", "Expense (₹)", "Fertilizer Used", "Yield (kg)"]
+      },
+      kn: {
+        formTitle: "ಹೊಸ ಕೃಷಿ ದಾಖಲೆ ಸೇರಿಸಿ", addBtn: "ದಾಖಲೆ ಸೇರಿಸಿ",
+        headers: ["ದಿನಾಂಕ", "ಬೆಳೆ", "ವೆಚ್ಚ (₹)", "ರಸಗೊಬ್ಬರ", "ಉತ್ಪಾದನೆ (ಕೆಜಿ)"],
+        placeholders: ["ಬೆಳೆ ಹೆಸರು", "ವೆಚ್ಚ (₹)", "ಬಳಸಿದ ರಸಗೊಬ್ಬರ", "ಉತ್ಪಾದನೆ (ಕೆಜಿ)"]
+      }
+    };
+
+    async function getWeather() {
+      const city = document.getElementById("city").value || "Bengaluru";
+      const apiKey = "073ebf805b2f48a6b53141426252410"; // Replace with your own API key
+      const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${encodeURIComponent(city)}&aqi=no`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.error) {
+          document.getElementById("output").textContent = "City not found ❌";
+          speak("City not found");
+        } else {
+          const weatherInfo = `${data.location.name}: ${data.current.temp_c}°C 🌡️`;
+          document.getElementById("output").textContent = weatherInfo;
+          speak(`Hey! It's ${data.current.temp_c} degrees in ${data.location.name}.`);
+        }
+      } catch (err) {
+        document.getElementById("output").textContent = "Error fetching data.";
+        speak("Error fetching data");
+      }
+    }
+
+    // Voice assistant
+    function speak(text) {
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.pitch = 1;
+      utter.rate = 1;
+      synth.speak(utter);
+    }
+
+    const langSelect = document.getElementById("langSelect");
+    const titleEl = document.getElementById("dashboardTitle");
+    const formTitleEl = document.getElementById("formTitle");
+    const addBtnEl = document.getElementById("addBtn");
+    const tableHeadersEl = document.getElementById("tableHeaders");
+    const btnBack = document.getElementById("btnBack");
+
+    const savedLang = localStorage.getItem("language") || "en";
+    langSelect.value = savedLang;
+    setLanguage(savedLang);
+    langSelect.addEventListener("change", () => {
+      const lang = langSelect.value;
+      localStorage.setItem("language", lang);
+      setLanguage(lang);
+    });
+
+    function setLanguage(lang) {
+      const t = translations[lang];
+      btnBack.textContent = t.back;
+      titleEl.textContent = t.title;
+      formTitleEl.textContent = t.formTitle;
+      addBtnEl.textContent = t.addBtn;
+      tableHeadersEl.innerHTML = t.headers.map(h => `<th>${h}</th>`).join("");
+      document.getElementById("crop").placeholder = t.placeholders[0];
+      document.getElementById("expense").placeholder = t.placeholders[1];
+      document.getElementById("fertilizer").placeholder = t.placeholders[2];
+      document.getElementById("yield").placeholder = t.placeholders[3];
+    }
+
+    const records = JSON.parse(localStorage.getItem("farmRecords") || "[]");
+    const tableBody = document.querySelector("#recordsTable tbody");
+
+    function renderTable() {
+      tableBody.innerHTML = records.map(r =>
+        `<tr><td>${r.date}</td><td>${r.crop}</td><td>${r.expense}</td><td>${r.fertilizer}</td><td>${r.yield}</td></tr>`
+      ).join("");
+    }
+
+    function addRecord() {
+      const date = document.getElementById("date").value;
+      const crop = document.getElementById("crop").value;
+      const expense = document.getElementById("expense").value;
+      const fertilizer = document.getElementById("fertilizer").value;
+      const yieldVal = document.getElementById("yield").value;
+
+      if (!date || !crop) return alert("Please fill at least Date and Crop name.");
+      records.push({ date, crop, expense, fertilizer, yield: yieldVal });
+      localStorage.setItem("farmRecords", JSON.stringify(records));
+      renderTable();
+      ["date", "crop", "expense", "fertilizer", "yield"].forEach(id => document.getElementById(id).value = "");
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>
